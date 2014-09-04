@@ -68,6 +68,10 @@ public abstract class BaseLayoutManager extends RecyclerView.LayoutManager {
      */
     protected RenderState mRenderState;
 
+    public OrientationHelper getOrientationHelper() {
+       return mOrientationHelper;
+    }
+
     /**
      * Many calculations are made depending on orientation. To keep it clean, this interface
      * helps {@link BaseLayoutManager} make those decisions.
@@ -1251,17 +1255,68 @@ public abstract class BaseLayoutManager extends RecyclerView.LayoutManager {
 
         final static String TAG = "LinearLayoutManager#RenderState";
 
-        final static int LAYOUT_START = -1;
+        public final static int LAYOUT_START = -1;
+        public final static int LAYOUT_END = 1;
+        public final static int INVALID_LAYOUT = Integer.MIN_VALUE;
+        public final static int ITEM_DIRECTION_HEAD = -1;
+        public final static int ITEM_DIRECTION_TAIL = 1;
+        public final static int SCOLLING_OFFSET_NaN = Integer.MIN_VALUE;
 
-        final static int LAYOUT_END = 1;
+        public int getOffset() {
+           return mOffset;
+        }
 
-        final static int INVALID_LAYOUT = Integer.MIN_VALUE;
+        public int getAvailable() {
+           return mAvailable;
+        }
 
-        final static int ITEM_DIRECTION_HEAD = -1;
+        public int getCurrentPosition() {
+           return mCurrentPosition;
+        }
 
-        final static int ITEM_DIRECTION_TAIL = 1;
+        public int getItemDirection() {
+           return mItemDirection;
+        }
 
-        final static int SCOLLING_OFFSET_NaN = Integer.MIN_VALUE;
+        public int getLayoutDirection() {
+           return mLayoutDirection;
+        }
+
+        public int getScrollingOffset() {
+           return mScrollingOffset;
+        }
+
+        public int getExtra() {
+           return mExtra;
+        }
+
+        public List<RecyclerView.ViewHolder> getScrapList() {
+           return mScrapList;
+        }
+
+        public void setOffset(int offset) {
+           mOffset = offset;
+        }
+
+        public void incrementOffset(int offset) {
+           mOffset += offset;
+        }
+
+        public void setScrollingOffset(int scrollingOffset) {
+           mScrollingOffset = scrollingOffset;
+        }
+
+        public void incrementScrollingOffset(int scrollingOffset) {
+           mScrollingOffset += scrollingOffset;
+        }
+
+        public void setAvailable(int available) {
+           mAvailable = available;
+        }
+
+        public void incrementAvailable(int available) {
+           mAvailable += available;
+        }
 
         /**
          * Pixel offset where rendering should start
@@ -1313,7 +1368,7 @@ public abstract class BaseLayoutManager extends RecyclerView.LayoutManager {
         /**
          * @return true if there are more items in the data adapter
          */
-        boolean hasMore(RecyclerView.State state) {
+        public boolean hasMore(RecyclerView.State state) {
             return mCurrentPosition >= 0 && mCurrentPosition < state.getItemCount();
         }
 
@@ -1323,7 +1378,7 @@ public abstract class BaseLayoutManager extends RecyclerView.LayoutManager {
          *
          * @return The next element that we should render.
          */
-        View next(RecyclerView.Recycler recycler) {
+        public View next(RecyclerView.Recycler recycler) {
             if (mScrapList != null) {
                 return nextFromLimitedList();
             }
@@ -1481,7 +1536,7 @@ public abstract class BaseLayoutManager extends RecyclerView.LayoutManager {
     /**
      * Helper interface to offload orientation based decisions
      */
-    static interface OrientationHelper {
+    public static interface OrientationHelper {
 
         /**
          * @param view The view element to check
